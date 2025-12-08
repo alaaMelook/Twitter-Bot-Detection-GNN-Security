@@ -72,7 +72,7 @@ We use the **Twitter Bot Detection Dataset** from Kaggle:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/YOUR_USERNAME/Twitter-Bot-Detection-GNN-Security.git
+git clone https://github.com/alaaMelook/Twitter-Bot-Detection-GNN-Security.git
 cd Twitter-Bot-Detection-GNN-Security
 ```
 
@@ -110,7 +110,7 @@ torch-geometric>=2.3.0
 
 1. **Download the dataset** from Kaggle and place it in the project root:
 ```
-twitter_bot_detection.csv
+bot_detection_data.csv
 ```
 
 2. **Run the main script**:
@@ -142,7 +142,7 @@ Twitter-Bot-Detection-GNN-Security/
 │
 ├── main.py                          # Main script
 ├── requirements.txt                 # Python dependencies
-├── twitter_bot_detection.csv        # Dataset (download separately)
+├── bot_detection_data.csv        # Dataset (download separately)
 ├── README.md                        # This file
 │
 ├── outputs/                         # Generated results
