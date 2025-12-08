@@ -1,0 +1,8 @@
+Model,Accuracy,F1-Score,Attack_Type
+Random Forest,0.5038,0.499697519661222,None
+GCN Clean,0.4959,0.618134989773502,None
+GraphSAGE Clean,0.4978,0.651201555771635,None
+GCN Evasion,0.4959,0.6181928349617511,Evasion
+GraphSAGE Evasion,0.498,0.6514856984171064,Evasion
+GCN Poisoning,0.4977,0.0,Poisoning
+GraphSAGE Poisoning,0.4977,0.0,Poisoning
