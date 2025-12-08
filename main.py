@@ -2,11 +2,7 @@
 FINAL PROJECT – Graph Security & Bot Detection on Twitter
 Twitter Social Graph Security Analysis Using GCN & GraphSAGE
 
-Team Members: Alaa Melook   2205214
-              Manar Ahmed   2205119    
-              Nadine Rasmy  2205203
-              Yumna Medhat  2205231
-Deadline: 17/12/2025
+Developed By: Alaa Melook   2205214
 
 This notebook contains all project tasks:
 1. Build the Graph
