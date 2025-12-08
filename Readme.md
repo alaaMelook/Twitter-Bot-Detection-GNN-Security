@@ -1,3 +1,5 @@
+# Twitter-Bot-Detection-GNN-Security
+Graph Security Analysis for Twitter Bot Detection using GCN &amp; GraphSAGE with Adversarial Attacks
 # 🤖 Twitter Bot Detection: Graph Security Analysis Using GCN & GraphSAGE
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
@@ -238,7 +240,7 @@ Twitter-Bot-Detection-GNN-Security/
 
 ## 👤 Developed By
 
-- Alaa Hassan Melook  2205214
+- Alaa Hassan Melook   ID : 2205214
 
 **Institution**: Alexandria National University
 **Course**: Social Networks / Graph Security  
