@@ -2,7 +2,11 @@
 FINAL PROJECT – Graph Security & Bot Detection on Twitter
 Twitter Social Graph Security Analysis Using GCN & GraphSAGE
 
-Developed By: Alaa Melook   2205214
+Team Members: Alaa Melook   2205214
+              Manar Ahmed   2205119    
+              Nadine Rasmy  2205203
+              Yumna Medhat  2205231
+Deadline: 17/12/2025
 
 This notebook contains all project tasks:
 1. Build the Graph
@@ -56,7 +60,7 @@ import seaborn as sns
 import os
 os.makedirs('outputs', exist_ok=True)
 
-print("✅ All libraries imported successfully!")
+print(" All libraries imported successfully!")
 print(f"PyTorch version: {torch.__version__}")
 print(f"CUDA available: {torch.cuda.is_available()}")
 
@@ -71,21 +75,21 @@ print("="*80)
 # Load dataset
 df = pd.read_csv('bot_detection_data.csv')
 
-print(f"\n📊 Dataset Shape: {df.shape}")
-print(f"\n📋 First 5 rows:")
+print(f"\n   Dataset Shape: {df.shape}")
+print(f"\n First 5 rows:")
 print(df.head())
 
-print(f"\n📈 Dataset Info:")
+print(f"\n    Dataset Info:")
 print(df.info())
 
-print(f"\n🤖 Bot Distribution:")
+print(f"\n Bot Distribution:")
 # Fix: Column name is 'Bot Label' not 'bot'
 bot_column = 'Bot Label' if 'Bot Label' in df.columns else 'bot'
 print(df[bot_column].value_counts())
 print(f"\nBot Percentage: {df[bot_column].mean()*100:.2f}%")
 
 # Check for missing values
-print(f"\n❓ Missing Values:")
+print(f"\n Missing Values:")
 print(df.isnull().sum())
 
 # Handle missing values if any
@@ -114,12 +118,12 @@ feature_columns = [col for col in possible_features if col in df.columns]
 
 # Make sure all needed columns exist
 if len(feature_columns) == 0:
-    print("⚠️ No feature columns found! Using available numeric columns...")
+    print(" No feature columns found! Using available numeric columns...")
     feature_columns = df.select_dtypes(include=[np.number]).columns.tolist()
     feature_columns = [col for col in feature_columns if col not in ['bot', 'User ID']]
 
 available_features = [col for col in feature_columns if col in df.columns]
-print(f"\n✅ Available features: {available_features}")
+print(f"\n  Available features: {available_features}")
 
 # ============================================================================
 # SECTION 2: BUILD THE GRAPH (TASK 1)
@@ -133,7 +137,7 @@ print("="*80)
 G = nx.Graph()
 
 # Add nodes with attributes
-print("\n🔨 Adding nodes to graph...")
+print("\n Adding nodes to graph...")
 for idx, row in df.iterrows():
     node_id = idx  # Use index as node ID
     G.add_node(node_id, 
@@ -141,10 +145,10 @@ for idx, row in df.iterrows():
                friends=row.get('friends_count', 0),
                bot=row['bot'])
 
-print(f"✅ Added {G.number_of_nodes()} nodes")
+print(f"  Added {G.number_of_nodes()} nodes")
 
 # Create edges based on feature similarity using KNN
-print("\n🔗 Creating edges based on user similarity...")
+print("\n Creating edges based on user similarity...")
 
 # Prepare features for similarity calculation
 # Add more meaningful features for better graph construction
@@ -175,8 +179,8 @@ for idx in range(len(df)):
             G.add_edge(idx, neighbor_idx)
             edge_count += 1
 
-print(f"✅ Added {edge_count} edges")
-print(f"\n📊 Graph Statistics:")
+print(f"  Added {edge_count} edges")
+print(f"\n Graph Statistics:")
 print(f"   - Nodes: {G.number_of_nodes()}")
 print(f"   - Edges: {G.number_of_edges()}")
 print(f"   - Density: {nx.density(G):.6f}")
@@ -191,7 +195,7 @@ print("SECTION 3: GRAPH METRICS COMPUTATION")
 print("="*80)
 
 # 1. Degree Distribution
-print("\n📊 Computing degree distribution...")
+print("\n   Computing degree distribution...")
 degrees = dict(G.degree())
 degree_values = list(degrees.values())
 
@@ -222,13 +226,13 @@ print(f"   - Max Degree: {max(degree_values)}")
 print(f"   - Min Degree: {min(degree_values)}")
 
 # 2. Clustering Coefficient
-print("\n🔍 Computing clustering coefficients...")
+print("\n Computing clustering coefficients...")
 clustering = nx.clustering(G)
 avg_clustering = np.mean(list(clustering.values()))
 print(f"   - Average Clustering Coefficient: {avg_clustering:.4f}")
 
 # 3. Centrality Measures
-print("\n⭐ Computing centrality measures...")
+print("\n Computing centrality measures...")
 degree_centrality = nx.degree_centrality(G)
 print(f"   - Degree Centrality computed for {len(degree_centrality)} nodes")
 
@@ -261,7 +265,7 @@ print("\n" + "="*80)
 print("SECTION 4: FEATURE EXTRACTION")
 print("="*80)
 
-print("\n🔧 Extracting features for each node...")
+print("\n Extracting features for each node...")
 
 node_features_list = []
 node_labels = []
@@ -303,8 +307,8 @@ for node in G.nodes():
 X = np.array(node_features_list, dtype=np.float32)
 y = np.array(node_labels, dtype=np.int64)
 
-print(f"✅ Feature matrix shape: {X.shape}")
-print(f"✅ Labels shape: {y.shape}")
+print(f"  Feature matrix shape: {X.shape}")
+print(f"  Labels shape: {y.shape}")
 print(f"   - Feature count: {X.shape[1]}")
 print(f"   - Bot samples: {sum(y)}")
 print(f"   - Human samples: {len(y) - sum(y)}")
@@ -322,7 +326,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-print(f"\n📊 Data Split:")
+print(f"\n   Data Split:")
 print(f"   - Training samples: {len(X_train)}")
 print(f"   - Test samples: {len(X_test)}")
 
@@ -332,7 +336,7 @@ X_train_scaled = scaler_ml.fit_transform(X_train)
 X_test_scaled = scaler_ml.transform(X_test)
 
 # Train Random Forest
-print("\n🌲 Training Random Forest...")
+print("\n Training Random Forest...")
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
 rf_model.fit(X_train_scaled, y_train)
 
@@ -340,12 +344,12 @@ rf_model.fit(X_train_scaled, y_train)
 y_pred_rf = rf_model.predict(X_test_scaled)
 
 # Evaluation
-print("\n📈 Random Forest Results:")
+print("\n Random Forest Results:")
 print(classification_report(y_test, y_pred_rf, target_names=['Human', 'Bot']))
 
 baseline_accuracy = accuracy_score(y_test, y_pred_rf)
 baseline_f1 = f1_score(y_test, y_pred_rf)
-print(f"\n🎯 Baseline Metrics:")
+print(f"\n Baseline Metrics:")
 print(f"   - Accuracy: {baseline_accuracy:.4f}")
 print(f"   - F1-Score: {baseline_f1:.4f}")
 
@@ -398,7 +402,7 @@ test_mask[test_indices] = True
 data = Data(x=x, edge_index=edge_index, y=y_tensor, 
             train_mask=train_mask, test_mask=test_mask)
 
-print(f"\n✅ PyTorch Geometric Data object created:")
+print(f"\n  PyTorch Geometric Data object created:")
 print(f"   - Number of nodes: {data.num_nodes}")
 print(f"   - Number of edges: {data.num_edges}")
 print(f"   - Number of features: {data.num_node_features}")
@@ -443,9 +447,9 @@ data = data.to(device)
 optimizer = torch.optim.Adam(gcn_model.parameters(), lr=0.01, weight_decay=5e-4)
 criterion = torch.nn.CrossEntropyLoss()
 
-print(f"\n🧠 GCN Model Architecture:")
+print(f"\n GCN Model Architecture:")
 print(gcn_model)
-print(f"\n🖥️ Training on: {device}")
+print(f"\n Training on: {device}")
 
 # Training function
 def train_gcn():
@@ -483,7 +487,7 @@ for epoch in range(1, 201):
 gcn_test_acc, gcn_pred, gcn_true = evaluate_gcn(data.test_mask)
 gcn_f1 = f1_score(gcn_true, gcn_pred)
 
-print(f"\n🎯 GCN Final Results:")
+print(f"\n  GCN Final Results:")
 print(f"   - Test Accuracy: {gcn_test_acc:.4f}")
 print(f"   - Test F1-Score: {gcn_f1:.4f}")
 print("\n" + classification_report(gcn_true, gcn_pred, target_names=['Human', 'Bot']))
@@ -534,7 +538,7 @@ class GraphSAGE(torch.nn.Module):
 sage_model = GraphSAGE(data.num_node_features, hidden_channels=64, num_classes=2).to(device)
 optimizer_sage = torch.optim.Adam(sage_model.parameters(), lr=0.01, weight_decay=5e-4)
 
-print(f"\n🧠 GraphSAGE Model Architecture:")
+print(f"\n GraphSAGE Model Architecture:")
 print(sage_model)
 
 # Training function
@@ -558,7 +562,7 @@ def evaluate_sage(mask):
     return acc, pred[mask].cpu().numpy(), data.y[mask].cpu().numpy()
 
 # Train GraphSAGE
-print("\n🏋️ Training GraphSAGE...")
+print("\n Training GraphSAGE...")
 sage_losses = []
 for epoch in range(1, 201):
     loss = train_sage()
@@ -573,7 +577,7 @@ for epoch in range(1, 201):
 sage_test_acc, sage_pred, sage_true = evaluate_sage(data.test_mask)
 sage_f1 = f1_score(sage_true, sage_pred)
 
-print(f"\n🎯 GraphSAGE Final Results:")
+print(f"\n GraphSAGE Final Results:")
 print(f"   - Test Accuracy: {sage_test_acc:.4f}")
 print(f"   - Test F1-Score: {sage_f1:.4f}")
 print("\n" + classification_report(sage_true, sage_pred, target_names=['Human', 'Bot']))
@@ -606,12 +610,12 @@ with torch.no_grad():
     ).cpu().numpy()
 
 # PCA
-print("\n🔍 Applying PCA...")
+print("\n Applying PCA...")
 pca = PCA(n_components=2)
 embeddings_pca = pca.fit_transform(embeddings)
 
 # t-SNE
-print("🔍 Applying t-SNE...")
+print(" Applying t-SNE...")
 tsne = TSNE(n_components=2, random_state=42)
 embeddings_tsne = tsne.fit_transform(embeddings)
 
@@ -638,7 +642,7 @@ plt.tight_layout()
 plt.savefig('outputs/embeddings_visualization.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-print("✅ Embeddings visualization saved!")
+print("  Embeddings visualization saved!")
 
 # ============================================================================
 # SECTION 10: MODEL COMPARISON
@@ -655,7 +659,7 @@ results_df = pd.DataFrame({
     'F1-Score': [baseline_f1, gcn_f1, sage_f1]
 })
 
-print("\n📊 Performance Comparison:")
+print("\n   Performance Comparison:")
 print(results_df.to_string(index=False))
 
 # Visualize comparison
@@ -685,12 +689,12 @@ print("\n" + "="*80)
 print("SECTION 11: ADVERSARIAL ATTACK 1 - EVASION")
 print("="*80)
 
-print("\n🎯 Performing Evasion Attack...")
+print("\n Performing Evasion Attack...")
 print("Strategy: Add edges from bot nodes to high-degree human accounts")
 
 # Identify bot nodes in test set
 test_bot_indices = [i for i in test_indices if y[i] == 1]
-print(f"\n📊 Test set contains {len(test_bot_indices)} bot nodes")
+print(f"\n   Test set contains {len(test_bot_indices)} bot nodes")
 
 # Find high-degree human nodes
 human_degrees = [(node, degree) for node, degree in degrees.items() 
@@ -698,7 +702,7 @@ human_degrees = [(node, degree) for node, degree in degrees.items()
 human_degrees.sort(key=lambda x: x[1], reverse=True)
 top_humans = [node for node, _ in human_degrees[:50]]  # Top 50 humans
 
-print(f"🎯 Target: Top {len(top_humans)} high-degree human accounts")
+print(f" Target: Top {len(top_humans)} high-degree human accounts")
 
 # Create attacked graph
 G_attacked = G.copy()
@@ -711,7 +715,7 @@ for bot_node in test_bot_indices[:50]:  # Attack first 50 bots
             G_attacked.add_edge(bot_node, human_node)
             attack_edges_added += 1
 
-print(f"✅ Added {attack_edges_added} malicious edges")
+print(f"  Added {attack_edges_added} malicious edges")
 
 # Convert attacked graph to PyG format
 edge_index_attacked = torch.tensor(list(G_attacked.edges()), dtype=torch.long).t().contiguous()
@@ -720,7 +724,7 @@ edge_index_attacked = torch.cat([edge_index_attacked, edge_index_attacked[[1, 0]
 data_attacked = Data(x=data.x, edge_index=edge_index_attacked, y=data.y,
                      train_mask=data.train_mask, test_mask=data.test_mask).to(device)
 
-print("\n🔍 Evaluating models on attacked graph (without retraining)...")
+print("\n Evaluating models on attacked graph (without retraining)...")
 
 # Test GCN on attacked graph
 gcn_model.eval()
@@ -733,7 +737,7 @@ gcn_attack_pred = pred_gcn_attack[data_attacked.test_mask].cpu().numpy()
 gcn_attack_true = data_attacked.y[data_attacked.test_mask].cpu().numpy()
 gcn_attack_f1 = f1_score(gcn_attack_true, gcn_attack_pred)
 
-print(f"\n📊 GCN Performance After Attack:")
+print(f"\n   GCN Performance After Attack:")
 print(f"   - Original Accuracy: {gcn_test_acc:.4f}")
 print(f"   - After Attack: {gcn_attack_acc:.4f}")
 print(f"   - Accuracy Drop: {(gcn_test_acc - gcn_attack_acc):.4f}")
@@ -751,7 +755,7 @@ sage_attack_pred = pred_sage_attack[data_attacked.test_mask].cpu().numpy()
 sage_attack_true = data_attacked.y[data_attacked.test_mask].cpu().numpy()
 sage_attack_f1 = f1_score(sage_attack_true, sage_attack_pred)
 
-print(f"\n📊 GraphSAGE Performance After Attack:")
+print(f"\n   GraphSAGE Performance After Attack:")
 print(f"   - Original Accuracy: {sage_test_acc:.4f}")
 print(f"   - After Attack: {sage_attack_acc:.4f}")
 print(f"   - Accuracy Drop: {(sage_test_acc - sage_attack_acc):.4f}")
@@ -767,7 +771,7 @@ total_test_bots = bot_mask_test.sum().item()
 gcn_evasion_rate = gcn_evaded_bots / total_test_bots * 100
 sage_evasion_rate = sage_evaded_bots / total_test_bots * 100
 
-print(f"\n🤖 Bot Evasion Analysis:")
+print(f"\n Bot Evasion Analysis:")
 print(f"   - Total bots in test set: {total_test_bots}")
 print(f"   - GCN: {gcn_evaded_bots} bots evaded ({gcn_evasion_rate:.2f}%)")
 print(f"   - GraphSAGE: {sage_evaded_bots} bots evaded ({sage_evasion_rate:.2f}%)")
@@ -811,7 +815,7 @@ print("\n" + "="*80)
 print("SECTION 12: ADVERSARIAL ATTACK 2 - POISONING")
 print("="*80)
 
-print("\n🎯 Performing Poisoning Attack...")
+print("\n Performing Poisoning Attack...")
 print("Strategy: Flip 20% of bot labels to human in training data")
 
 # Create poisoned training data
@@ -823,12 +827,12 @@ num_to_flip = int(0.2 * len(train_bot_indices))
 flip_indices = train_bot_indices[torch.randperm(len(train_bot_indices))[:num_to_flip]]
 data_poisoned.y[flip_indices] = 0  # Flip bot labels to human
 
-print(f"✅ Flipped {num_to_flip} bot labels to human in training set")
+print(f"  Flipped {num_to_flip} bot labels to human in training set")
 print(f"   - Original training bots: {len(train_bot_indices)}")
 print(f"   - After poisoning: {len(train_bot_indices) - num_to_flip}")
 
 # Retrain GCN on poisoned data
-print("\n🏋️ Retraining GCN on poisoned data...")
+print("\n Retraining GCN on poisoned data...")
 gcn_poisoned = GCN(data.num_node_features, hidden_channels=64, num_classes=2).to(device)
 optimizer_poisoned = torch.optim.Adam(gcn_poisoned.parameters(), lr=0.01, weight_decay=5e-4)
 
@@ -847,7 +851,7 @@ for epoch in range(1, 201):
         print(f'Epoch {epoch:03d}, Loss: {loss:.4f}')
 
 # Evaluate on CLEAN test set
-print("\n🔍 Evaluating poisoned GCN on clean test data...")
+print("\n Evaluating poisoned GCN on clean test data...")
 gcn_poisoned.eval()
 with torch.no_grad():
     out_poisoned = gcn_poisoned(data.x, data.edge_index)  # Use original clean data
@@ -858,7 +862,7 @@ gcn_poisoned_pred = pred_poisoned[data.test_mask].cpu().numpy()
 gcn_poisoned_true = data.y[data.test_mask].cpu().numpy()
 gcn_poisoned_f1 = f1_score(gcn_poisoned_true, gcn_poisoned_pred)
 
-print(f"\n📊 GCN Performance After Poisoning:")
+print(f"\n   GCN Performance After Poisoning:")
 print(f"   - Original Accuracy: {gcn_test_acc:.4f}")
 print(f"   - After Poisoning: {gcn_poisoned_acc:.4f}")
 print(f"   - Performance Drop: {(gcn_test_acc - gcn_poisoned_acc):.4f}")
@@ -866,7 +870,7 @@ print(f"   - Original F1: {gcn_f1:.4f}")
 print(f"   - After Poisoning F1: {gcn_poisoned_f1:.4f}")
 
 # Retrain GraphSAGE on poisoned data
-print("\n🏋️ Retraining GraphSAGE on poisoned data...")
+print("\n Retraining GraphSAGE on poisoned data...")
 sage_poisoned = GraphSAGE(data.num_node_features, hidden_channels=64, num_classes=2).to(device)
 optimizer_sage_poisoned = torch.optim.Adam(sage_poisoned.parameters(), lr=0.01, weight_decay=5e-4)
 
@@ -896,7 +900,7 @@ sage_poisoned_pred = pred_sage_poisoned[data.test_mask].cpu().numpy()
 sage_poisoned_true = data.y[data.test_mask].cpu().numpy()
 sage_poisoned_f1 = f1_score(sage_poisoned_true, sage_poisoned_pred)
 
-print(f"\n📊 GraphSAGE Performance After Poisoning:")
+print(f"\n   GraphSAGE Performance After Poisoning:")
 print(f"   - Original Accuracy: {sage_test_acc:.4f}")
 print(f"   - After Poisoning: {sage_poisoned_acc:.4f}")
 print(f"   - Performance Drop: {(sage_test_acc - sage_poisoned_acc):.4f}")
@@ -942,7 +946,7 @@ print("\n" + "="*80)
 print("SECTION 13: SECURITY ANALYSIS & RECOMMENDATIONS")
 print("="*80)
 
-print("\n🔒 SECURITY VULNERABILITY ANALYSIS")
+print("\n SECURITY VULNERABILITY ANALYSIS")
 print("="*60)
 
 # Create comprehensive results table
@@ -954,7 +958,7 @@ security_results = pd.DataFrame({
     'GraphSAGE F1': [sage_f1, sage_attack_f1, sage_poisoned_f1]
 })
 
-print("\n📊 Attack Impact Summary:")
+print("\n   Attack Impact Summary:")
 print(security_results.to_string(index=False))
 
 # Calculate vulnerability scores
@@ -963,7 +967,7 @@ gcn_poisoning_vulnerability = (gcn_test_acc - gcn_poisoned_acc) / gcn_test_acc *
 sage_evasion_vulnerability = (sage_test_acc - sage_attack_acc) / sage_test_acc * 100
 sage_poisoning_vulnerability = (sage_test_acc - sage_poisoned_acc) / sage_test_acc * 100
 
-print(f"\n🎯 Vulnerability Scores (% Performance Drop):")
+print(f"\n Vulnerability Scores (% Performance Drop):")
 print(f"   GCN:")
 print(f"      - Evasion Vulnerability: {gcn_evasion_vulnerability:.2f}%")
 print(f"      - Poisoning Vulnerability: {gcn_poisoning_vulnerability:.2f}%")
@@ -1144,7 +1148,7 @@ print(security_analysis)
 with open('outputs/security_analysis_report.txt', 'w', encoding='utf-8') as f:
     f.write(security_analysis)
 
-print("\n✅ Security analysis report saved to 'outputs/security_analysis_report.txt'")
+print("\n  Security analysis report saved to 'outputs/security_analysis_report.txt'")
 
 # ============================================================================
 # SECTION 14: FINAL VISUALIZATIONS & SUMMARY
@@ -1268,7 +1272,7 @@ ax7.text(0.1, 0.5, summary_text, fontsize=10, verticalalignment='center',
 plt.savefig('outputs/final_comprehensive_summary.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-print("\n✅ All visualizations saved to 'outputs/' directory")
+print("\n  All visualizations saved to 'outputs/' directory")
 
 # ============================================================================
 # FINAL SUMMARY
@@ -1279,9 +1283,9 @@ print("PROJECT COMPLETION SUMMARY")
 print("="*80)
 
 final_summary = f"""
-✅ ALL TASKS COMPLETED SUCCESSFULLY!
+  ALL TASKS COMPLETED SUCCESSFULLY!
 
-📊 Outputs Generated:
+   Outputs Generated:
    1. degree_distribution.png
    2. baseline_confusion_matrix.png
    3. gcn_confusion_matrix.png
@@ -1339,8 +1343,8 @@ results_summary = pd.DataFrame({
 })
 
 results_summary.to_csv('outputs/all_results_summary.csv', index=False)
-print("\n✅ Results summary saved to 'outputs/all_results_summary.csv'")
+print("\n  Results summary saved to 'outputs/all_results_summary.csv'")
 
 print("\n" + "="*80)
-print("🚀 Ready to write your report! All data and figures are in 'outputs/' folder")
+print(" Ready to write your report! All data and figures are in 'outputs/' folder")
 print("="*80)
